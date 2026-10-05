@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:;" />
+  <title>NotifyCopy Toast</title>
+  <link rel="stylesheet" href="toast.css" />
+</head>
+<body>
+  <div id="toast">
+    <div class="toast-content">
+      <div class="toast-check-wrapper">
+        <div id="toast-check">
+          <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+      </div>
+      <div class="toast-main">
+        <span id="toast-label">Copiado</span>
+        <div class="toast-preview-wrapper">
+          <p id="toast-preview"></p>
+        </div>
+        <div class="toast-meta">
+          <span id="toast-count">0 caracteres</span>
+        </div>
+      </div>
+    </div>
+    <div id="toast-progress"></div>
+  </div>
+  <script src="toast.js" defer></script>
+</body>
+</html>

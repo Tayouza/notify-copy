@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+out/
+release/
+build/output/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated preview variants (preview.png is committed for the README)
+docs/preview-*.png
+
+# Maestri workspace internals
+.maestri/
+
+# Editor
+.vscode/
+.idea/

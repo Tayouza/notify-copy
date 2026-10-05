@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NotifyCopy Toast Preview</title>
+  <link rel="stylesheet" href="./toast.css" />
+  <style>
+    body {
+      background: radial-gradient(
+          circle at top left,
+          rgba(99, 102, 241, 0.16),
+          transparent 40%
+        ),
+        radial-gradient(
+          circle at bottom right,
+          rgba(139, 92, 246, 0.14),
+          transparent 45%
+        ),
+        #0f1026;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      padding: 40px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+        sans-serif;
+    }
+
+    .preview-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: center;
+      color: #f8fafc;
+    }
+
+    .preview-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    button {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: #ffffff;
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 22px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 18px 60px -24px rgba(99, 102, 241, 0.9);
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 64px -24px rgba(99, 102, 241, 1);
+    }
+
+    button:active {
+      transform: translateY(-1px);
+    }
+
+    .toast-stage {
+      position: relative;
+      width: 340px;
+      height: 80px;
+    }
+
+    .toast-stage #toast {
+      position: absolute;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-panel">
+    <h1 style="font-size: 18px; font-weight: 600; letter-spacing: -0.01em">
+      NotifyCopy Toast Preview
+    </h1>
+    <p style="opacity: 0.8; font-size: 13px">
+      Simula toast:show com texto de exemplo
+    </p>
+  </div>
+  <div class="toast-stage">
+    <div id="toast">
+      <div class="toast-content">
+        <div class="toast-main">
+          <div class="toast-preview-wrapper">
+            <p id="toast-preview"></p>
+          </div>
+          <div class="toast-meta">
+            <span id="toast-count">0 caracteres</span>
+          </div>
+        </div>
+        <div class="toast-check-wrapper">
+          <div id="toast-check">
+            <svg
+              class="check-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div id="toast-progress"></div>
+    </div>
+  </div>
+  <div class="preview-actions">
+    <button id="btn-show">Mostrar toast</button>
+    <button id="btn-replay">Reanimar</button>
+  </div>
+
+  <script>
+    (function () {
+      const toastEl = document.getElementById("toast");
+      const previewEl = document.getElementById("toast-preview");
+      const countEl = document.getElementById("toast-count");
+      const progressEl = document.getElementById("toast-progress");
+      const btnShow = document.getElementById("btn-show");
+      const btnReplay = document.getElementById("btn-replay");
+
+      const sampleText =
+        "Texto copiado com sucesso! Este é um preview de exemplo para inspecionar o design glassmorphism do toast do NotifyCopy.";
+
+      let hideTimer = null;
+      const duration = 2400;
+
+      function formatCount(chars) {
+        const count = typeof chars === "number" && !isNaN(chars) ? chars : 0;
+        if (count === 1) {
+          return "1 caracter";
+        }
+        return count + " caracteres";
+      }
+
+      function hide() {
+        if (hideTimer !== null) {
+          clearTimeout(hideTimer);
+          hideTimer = null;
+        }
+        toastEl.classList.remove("is-visible");
+        toastEl.classList.add("is-hiding");
+      }
+
+      function show() {
+        if (hideTimer !== null) {
+          clearTimeout(hideTimer);
+          hideTimer = null;
+        }
+        const text = sampleText;
+        previewEl.textContent = text;
+        countEl.textContent = formatCount(text.length);
+
+        toastEl.classList.remove("is-hiding");
+        void toastEl.offsetWidth;
+        toastEl.classList.add("is-visible");
+
+        progressEl.style.animation = "none";
+        requestAnimationFrame(() => {
+          progressEl.style.animation =
+            "toast-progress-run " + duration + "ms linear forwards";
+        });
+
+        hideTimer = setTimeout(hide, duration);
+      }
+
+      if (btnShow) btnShow.addEventListener("click", show);
+      if (btnReplay) btnReplay.addEventListener("click", show);
+
+      show();
+    })();
+  </script>
+</body>
+</html>

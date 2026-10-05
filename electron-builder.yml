@@ -1,0 +1,67 @@
+appId: com.notifycopy.app
+productName: NotifyCopy
+
+directories:
+  output: dist
+  buildResources: build
+
+files:
+  - src/**
+  - package.json
+  - assets/**
+
+artifactName: "${productName}-${version}-${os}-${arch}.${ext}"
+
+linux:
+  target:
+    - target: AppImage
+      arch: [x64]
+    - target: deb
+      arch: [x64]
+  category: Utility
+  synopsis: Clipboard-to-toast app
+  description: NotifyCopy mostra um toast personalizado quando você copia um texto.
+
+mac:
+  target:
+    - target: dmg
+      arch: [x64, arm64]
+    - target: zip
+      arch: [x64, arm64]
+  category: public.app-category.utilities
+  darkModeSupport: true
+
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+    - target: portable
+      arch: [x64]
+  artifactName: "${productName}-${version}-${os}-${arch}-nsis.${ext}"
+
+portable:
+  artifactName: "${productName}-${version}-${os}-${arch}-portable.${ext}"
+
+nsis:
+  oneClick: true
+  perMachine: false
+  allowToChangeInstallationDirectory: false
+  deleteAppDataOnUninstall: false
+  license: LICENSE
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: NotifyCopy
+
+dmg:
+  writeUpdateInfo: false
+  format: UDRW
+  contents:
+    - x: 130
+      y: 220
+    - x: 410
+      y: 220
+      type: link
+      path: /Applications
+
+extraMetadata:
+  name: notifycopy

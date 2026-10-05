@@ -1,0 +1,26 @@
+{
+  "name": "notifycopy",
+  "productName": "NotifyCopy",
+  "version": "0.1.0",
+  "description": "Tray app that shows a custom toast when text is copied",
+  "main": "src/main/main.js",
+  "author": "Tayouza <tayouza@users.noreply.github.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/Tayouza/notify-copy",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tayouza/notify-copy.git"
+  },
+  "scripts": {
+    "start": "electron .",
+    "demo": "electron . --demo",
+    "dist": "electron-builder",
+    "dist:linux": "electron-builder --linux",
+    "dist:mac": "electron-builder --mac",
+    "dist:win": "electron-builder --win"
+  },
+  "devDependencies": {
+    "electron": "^37.6.1",
+    "electron-builder": "^26.0.12"
+  }
+}
