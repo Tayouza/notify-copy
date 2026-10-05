@@ -18,6 +18,17 @@ let toastWindow = null;
 let watcher = null;
 let demoMode = process.env.NOTIFYCOPY_DEMO === '1' || process.argv.includes('--demo');
 let captureMode = process.env.NOTIFYCOPY_CAPTURE === '1';
+let miniMode = process.argv.includes('--mini');
+let forceAccent = null;
+let currentMode = null;
+for (let i = 0; i < process.argv.length; i++) {
+  if (process.argv[i].startsWith('--accent=')) {
+    const v = process.argv[i].split('=')[1];
+    if (/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(v || '')) {
+      forceAccent = v;
+    }
+  }
+}
 
 function setupLoginItem() {
   try {
@@ -42,11 +53,24 @@ function applyConfigChanges() {
   }
   if (toastWindow) {
     toastWindow.config = config;
+    const mode = config.toastMode || 'full';
+    // Só recarrega o HTML quando o estilo muda (evita recarregar a cada ajuste)
+    if (mode !== currentMode) {
+      currentMode = mode;
+      const htmlPath = mode === 'mini'
+        ? path.join(__dirname, '../renderer/mini.html')
+        : path.join(__dirname, '../renderer/toast.html');
+      toastWindow.load(fs.existsSync(htmlPath) ? htmlPath : null);
+    }
     toastWindow.updateTheme();
+    toastWindow.updateAccent();
   }
   updateTray();
   setupLoginItem();
-  writeConfig(config);
+  // Não persiste quando flags de sessão (--mini/--accent) foram usadas
+  if (!miniMode && !forceAccent) {
+    writeConfig(config);
+  }
 }
 
 async function captureToast() {
@@ -56,7 +80,8 @@ async function captureToast() {
   try {
     const docsDir = path.join(__dirname, '../../docs');
     fs.mkdirSync(docsDir, { recursive: true });
-    const pngPath = path.join(docsDir, 'preview.png');
+    const fileName = (config.toastMode === 'mini') ? 'preview-mini.png' : 'preview.png';
+    const pngPath = path.join(docsDir, fileName);
     const image = await win.webContents.capturePage();
     fs.writeFileSync(pngPath, image.toPNG());
     console.log(`CAPTURED ${pngPath}`);
@@ -87,13 +112,17 @@ function startDemo() {
 }
 
 async function createWindow() {
-  const toastHtml = path.join(__dirname, '../renderer/toast.html');
+  const mode = config.toastMode || 'full';
+  currentMode = mode;
+  const htmlPath = mode === 'mini' 
+    ? path.join(__dirname, '../renderer/mini.html')
+    : path.join(__dirname, '../renderer/toast.html');
   if (toastWindow) {
-    toastWindow.load(fs.existsSync(toastHtml) ? toastHtml : null);
+    toastWindow.load(fs.existsSync(htmlPath) ? htmlPath : null);
     return toastWindow.window;
   }
   toastWindow = new ToastWindow(config);
-  toastWindow.load(fs.existsSync(toastHtml) ? toastHtml : null);
+  toastWindow.load(fs.existsSync(htmlPath) ? htmlPath : null);
   return toastWindow.window;
 }
 
@@ -135,6 +164,14 @@ function setupTray() {
         toastWindow.updateTheme();
       }
     },
+    onSetAccent: (hex) => {
+      config.accent = hex;
+      applyConfigChanges();
+    },
+    onSetToastMode: (mode) => {
+      config.toastMode = mode;
+      applyConfigChanges();
+    },
     onSetLaunchAtLogin: (checked) => {
       config.launchAtLogin = checked;
       applyConfigChanges();
@@ -168,12 +205,21 @@ async function init() {
   }
 
   setupIpc();
+  if (miniMode) {
+    config.toastMode = 'mini';
+  }
+  if (forceAccent) {
+    config.accent = forceAccent;
+  }
   await createWindow();
   // Small delay on Linux for transparency
   if (process.platform === 'linux') {
     await new Promise(resolve => setTimeout(resolve, 300));
   }
   setupTray();
+  nativeTheme.on('updated', () => {
+    if (toastWindow) toastWindow.updateTheme();
+  });
   setupWatcher();
   setupLoginItem();
   applyConfigChanges();

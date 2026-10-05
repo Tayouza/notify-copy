@@ -28,6 +28,15 @@ contextBridge.exposeInMainWorld('notifycopy', {
       ipcRenderer.removeListener('toast:theme', handler);
     };
   },
+  onAccent: (callback) => {
+    const handler = (_event, data) => {
+      if (typeof callback === 'function') callback(data);
+    };
+    ipcRenderer.on('toast:accent', handler);
+    return () => {
+      ipcRenderer.removeListener('toast:accent', handler);
+    };
+  },
   ready: () => {
     ipcRenderer.send('toast:ready');
   },

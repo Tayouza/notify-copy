@@ -12,6 +12,7 @@ const DEFAULT_CONFIG = {
   showPreview: true,
   launchAtLogin: false,
   accent: '#6366f1',
+  toastMode: 'full',
 };
 
 function readConfig() {
@@ -19,7 +20,14 @@ function readConfig() {
     if (fs.existsSync(CONFIG_FILE)) {
       const data = fs.readFileSync(CONFIG_FILE, 'utf8');
       const parsed = JSON.parse(data);
-      return { ...DEFAULT_CONFIG, ...parsed };
+      const merged = { ...DEFAULT_CONFIG, ...parsed };
+      if (!/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(merged.accent || '')) {
+        merged.accent = DEFAULT_CONFIG.accent;
+      }
+      if (merged.toastMode !== 'mini' && merged.toastMode !== 'full') {
+        merged.toastMode = DEFAULT_CONFIG.toastMode;
+      }
+      return merged;
     }
   } catch (e) {
     // ignore and use defaults

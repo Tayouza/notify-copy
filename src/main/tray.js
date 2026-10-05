@@ -1,15 +1,20 @@
 const { Tray, Menu, app, nativeImage } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const { createTrayIcon } = require('./tray-icon');
 
 function createTray(iconPath, config, options = {}) {
   let tray = null;
+  let currentIcon = null;
   try {
     let icon = nativeImage.createEmpty();
-    if (iconPath && fs.existsSync(iconPath)) {
+    const dynamicIcon = createTrayIcon(config.accent || '#6366f1');
+    if (dynamicIcon) {
+      icon = dynamicIcon;
+      currentIcon = icon;
+    } else if (iconPath && fs.existsSync(iconPath)) {
       icon = nativeImage.createFromPath(iconPath);
     } else {
-      // fallback to a simple 16x16 icon if available; else empty
       const pngPath = path.join(__dirname, '../../assets/icon.png');
       if (fs.existsSync(pngPath)) {
         icon = nativeImage.createFromPath(pngPath);
@@ -22,6 +27,17 @@ function createTray(iconPath, config, options = {}) {
   } catch (e) {
     tray = new Tray(nativeImage.createEmpty());
   }
+
+  const colorPresets = [
+    { label: 'Índigo', hex: '#6366f1' },
+    { label: 'Azul', hex: '#3b82f6' },
+    { label: 'Verde', hex: '#22c55e' },
+    { label: 'Rosa', hex: '#ec4899' },
+    { label: 'Laranja', hex: '#f97316' },
+    { label: 'Vermelho', hex: '#ef4444' },
+    { label: 'Ciano', hex: '#06b6d4' },
+    { label: 'Âmbar', hex: '#f59e0b' },
+  ];
 
   const buildMenu = () => {
     const menu = Menu.buildFromTemplate([
@@ -60,6 +76,22 @@ function createTray(iconPath, config, options = {}) {
         ],
       },
       {
+        label: 'Cor',
+        submenu: colorPresets.map(p => ({
+          label: p.label,
+          type: 'radio',
+          checked: (config.accent || '#6366f1') === p.hex,
+          click: () => { if (options.onSetAccent) options.onSetAccent(p.hex); },
+        })),
+      },
+      {
+        label: 'Estilo do toast',
+        submenu: [
+          { label: 'Completo', type: 'radio', checked: (config.toastMode || 'full') === 'full', click: () => { if (options.onSetToastMode) options.onSetToastMode('full'); } },
+          { label: 'Mini', type: 'radio', checked: (config.toastMode || 'full') === 'mini', click: () => { if (options.onSetToastMode) options.onSetToastMode('mini'); } },
+        ],
+      },
+      {
         label: 'Iniciar com o sistema',
         type: 'checkbox',
         checked: !!config.launchAtLogin,
@@ -78,6 +110,14 @@ function createTray(iconPath, config, options = {}) {
     update: (newConfig) => {
       config = newConfig;
       if (tray) {
+        const dyn = createTrayIcon(config.accent || '#6366f1');
+        if (dyn) {
+          let iconToSet = dyn;
+          if (process.platform === 'darwin') {
+            iconToSet = dyn.resize ? dyn.resize({ width: 18, height: 18 }) : dyn;
+          }
+          try { tray.setImage(iconToSet); } catch (e) {}
+        }
         tray.setContextMenu(buildMenu());
       }
     },

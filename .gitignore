@@ -15,8 +15,9 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 
-# Generated preview variants (preview.png is committed for the README)
+# Generated preview variants (preview.png and preview-mini.png are committed)
 docs/preview-*.png
+!docs/preview-mini.png
 
 # Maestri workspace internals
 .maestri/

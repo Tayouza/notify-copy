@@ -1,17 +1,14 @@
 (function () {
-  const toastEl = document.getElementById("toast");
-  const previewEl = document.getElementById("toast-preview");
-  const countEl = document.getElementById("toast-count");
-  const labelEl = document.getElementById("toast-label");
-  const progressEl = document.getElementById("toast-progress");
+  const miniToastEl = document.getElementById("mini-toast");
+  const pages = document.querySelectorAll(".page");
 
-  if (!toastEl || !previewEl || !countEl || !progressEl) {
+  if (!miniToastEl || !pages.length) {
     return;
   }
 
   let hideTimer = null;
-  let currentDuration = 2200;
   let isVisible = false;
+  let currentDuration = 1400;
 
   const DEFAULT_ACCENT = "#6366f1";
   const DEFAULT_ACCENT_END = "#8b5cf6";
@@ -125,26 +122,16 @@
   }
 
   function setAccent(accent, accentEnd) {
-    // Define as variáveis no :root para que os gradientes declarados em :root
-    // (ex.: --toast-check-bg-*) sejam recalculados com a cor atual.
     const root = document.documentElement;
     const safeAccent = normalizeAccent(accent, DEFAULT_ACCENT);
     root.style.setProperty("--accent", safeAccent);
-    toastEl.dataset.accent = safeAccent;
+    miniToastEl.dataset.accent = safeAccent;
 
     const safeEnd = isValidAccent(accentEnd) ? accentEnd.trim() : deriveAccentEnd(safeAccent);
     root.style.setProperty("--accent-end", safeEnd);
   }
 
   setAccent(DEFAULT_ACCENT, DEFAULT_ACCENT_END);
-
-  function formatCount(chars) {
-    const count = typeof chars === "number" && !isNaN(chars) ? chars : 0;
-    if (count === 1) {
-      return "1 caracter";
-    }
-    return count + " caracteres";
-  }
 
   function clearHideTimer() {
     if (hideTimer !== null) {
@@ -159,57 +146,35 @@
     }
     clearHideTimer();
     isVisible = false;
-    toastEl.classList.remove("is-visible");
-    toastEl.classList.add("is-hiding");
+    miniToastEl.classList.remove("is-visible");
+    miniToastEl.classList.add("is-hiding");
   }
 
   function show(payload) {
     if (!payload || typeof payload !== "object") {
-      return;
+      payload = {};
     }
 
-    const text = typeof payload.text === "string" ? payload.text : "";
-    const chars = typeof payload.chars === "number" ? payload.chars : text.length;
-    const durationMs =
-      typeof payload.durationMs === "number" && payload.durationMs > 0
-        ? payload.durationMs
-        : 2200;
-    const theme =
-      payload.theme === "light" || payload.theme === "dark" ? payload.theme : null;
-    const accent =
-      typeof payload.accent === "string" && payload.accent
-        ? payload.accent
-        : DEFAULT_ACCENT;
+    const accent = typeof payload.accent === "string" && payload.accent ? payload.accent : DEFAULT_ACCENT;
     const accentEnd = typeof payload.accentEnd === "string" ? payload.accentEnd : null;
-    const showPreview = payload.showPreview !== false;
+    const durationMs = typeof payload.durationMs === "number" && payload.durationMs > 0 ? payload.durationMs : 1400;
+    const theme = payload.theme === "light" || payload.theme === "dark" ? payload.theme : null;
 
     currentDuration = durationMs;
-
-    const cleanText = text.replace(/\s+/g, " ").trim();
-    previewEl.textContent = showPreview ? cleanText : "";
-    countEl.textContent = formatCount(chars);
-    if (labelEl) {
-      labelEl.textContent = "Copiado";
-    }
 
     setAccent(accent, accentEnd);
 
     if (theme) {
-      toastEl.dataset.theme = theme;
+      miniToastEl.dataset.theme = theme;
     } else {
-      delete toastEl.dataset.theme;
+      delete miniToastEl.dataset.theme;
     }
 
     clearHideTimer();
 
-    // Reinicia as animações (entrada, selo e barra de progresso)
-    document.documentElement.style.setProperty(
-      "--progress-duration",
-      currentDuration + "ms"
-    );
-    toastEl.classList.remove("is-visible", "is-hiding");
-    void toastEl.offsetWidth;
-    toastEl.classList.add("is-visible");
+    miniToastEl.classList.remove("is-hiding");
+    void miniToastEl.offsetWidth;
+    miniToastEl.classList.add("is-visible");
     isVisible = true;
 
     hideTimer = setTimeout(hide, currentDuration);
@@ -219,12 +184,11 @@
     if (!payload || typeof payload !== "object") {
       return;
     }
-    const theme =
-      payload.theme === "light" || payload.theme === "dark" ? payload.theme : null;
+    const theme = payload.theme === "light" || payload.theme === "dark" ? payload.theme : null;
     if (theme) {
-      toastEl.dataset.theme = theme;
+      miniToastEl.dataset.theme = theme;
     } else {
-      delete toastEl.dataset.theme;
+      delete miniToastEl.dataset.theme;
     }
   }
 
@@ -232,10 +196,7 @@
     if (!payload || typeof payload !== "object") {
       return;
     }
-    const accent =
-      typeof payload.accent === "string" && payload.accent
-        ? payload.accent
-        : DEFAULT_ACCENT;
+    const accent = typeof payload.accent === "string" && payload.accent ? payload.accent : DEFAULT_ACCENT;
     const accentEnd = typeof payload.accentEnd === "string" ? payload.accentEnd : null;
     setAccent(accent, accentEnd);
   }
