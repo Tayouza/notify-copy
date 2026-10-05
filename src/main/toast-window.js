@@ -15,7 +15,7 @@ class ToastWindow {
 
   getSize() {
     const mode = (this.config && this.config.toastMode) || 'full';
-    if (mode === 'mini') return { width: 140, height: 140 };
+    if (mode === 'mini') return { width: 100, height: 100 };
     return { width: 340, height: 130 };
   }
 
@@ -98,19 +98,22 @@ class ToastWindow {
     const display = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
     const workArea = display.workArea;
     const pos = this.config.position || 'cursor';
+    const mode = (this.config && this.config.toastMode) || 'full';
+    const margin = mode === 'mini' ? 8 : 24;
+    const off = mode === 'mini' ? 10 : 16;
+    const edge = mode === 'mini' ? 4 : 8;
 
     if (pos === 'cursor') {
       const cursor = screen.getCursorScreenPoint();
-      let x = cursor.x + 16;
-      let y = cursor.y + 16;
-      if (x + width > workArea.x + workArea.width) x = workArea.x + workArea.width - width - 8;
-      if (x < workArea.x) x = workArea.x + 8;
-      if (y + height > workArea.y + workArea.height) y = cursor.y - height - 16;
-      if (y < workArea.y) y = workArea.y + 8;
+      let x = cursor.x + off;
+      let y = cursor.y + off;
+      if (x + width > workArea.x + workArea.width) x = cursor.x - width - off;
+      if (x < workArea.x) x = workArea.x + edge;
+      if (y + height > workArea.y + workArea.height) y = cursor.y - height - off;
+      if (y < workArea.y) y = workArea.y + edge;
       return { x, y };
     }
 
-    const margin = 24;
     let x = workArea.x;
     let y = workArea.y;
 

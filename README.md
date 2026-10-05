@@ -67,7 +67,7 @@ Ao alterar a cor, tanto o **toast** quanto o **ícone da bandeja** são atualiza
 No menu da bandeja → **Estilo do toast**, você pode alternar entre:
 
 - **Completo** (padrão): mostra o preview do texto copiado, contador, barra de progresso e animação de entrada/saída. Ideal para visualizar rapidamente o conteúdo copiado.
-- **Mini**: versão compacta (~140×140) que exibe apenas a animação de duas folhas se duplicando (estilo "copiar"). Sem texto, discreto e minimalista.
+- **Mini**: versão compacta (~100×100) que exibe apenas a animação de duas folhas se duplicando (estilo "copiar"). Sem texto, discreto e minimalista.
 
 ## Modo demo
 
@@ -130,8 +130,9 @@ sudo apt install libayatana-appindicator3-1 libnotify4 libnss3 libxtst6 libxss1 
 
 ### Notas sobre Wayland
 
-- Em sessões **Wayland** (`XDG_SESSION_TYPE=wayland`), o Electron pode exigir flags adicionais (ex.: `--ozone-platform=wayland`). A aplicação deve detectar o tipo de sessão e aplicar as flags necessárias (conforme requisito 14 da especificação).
-- Algumas configurações de posicionamento/visibilidade podem variar conforme compositor Wayland. Isso será tratado na implementação.
+- Em sessões **Wayland**, o compositor **não permite** que o app posicione a janela livremente (o `setPosition` é ignorado). Por isso o NotifyCopy força o backend **X11/XWayland** (`--ozone-platform-hint=x11`), onde o toast fica exatamente no cursor e pode chegar perto das bordas.
+- Isso requer o **XWayland** (presente por padrão na maioria das distros). Sem XWayland, o app ainda funciona, mas o toast aparecerá onde o compositor decidir.
+- Em X11 nativo e no Windows/macOS o posicionamento é sempre preciso.
 
 ## Licença
 

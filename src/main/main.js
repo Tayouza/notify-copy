@@ -9,7 +9,9 @@ const { createTray } = require('./tray');
 // Platform flags - must be set before app is ready
 if (process.platform === 'linux') {
   app.commandLine.appendSwitch('enable-transparent-visuals');
-  app.commandLine.appendSwitch('ozone-platform-hint', 'auto');
+  // X11/XWayland: garante posicionamento preciso. No Wayland nativo o compositor
+  // ignora setPosition e o toast não fica no cursor (nem perto da borda).
+  app.commandLine.appendSwitch('ozone-platform-hint', 'x11');
 }
 
 let config = readConfig();
