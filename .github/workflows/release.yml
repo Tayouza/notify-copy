@@ -39,8 +39,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # --publish never: sem tag o electron-builder não publica, mas COM tag ele
+      # ativa publish automático ("onTag") e tenta criar a Release com o token
+      # deste job (que é só de leitura) → 403 e o build falha. A publicação é
+      # feita pelo job "Publicar release" abaixo, então desligamos aqui.
       - name: Build
-        run: npx electron-builder ${{ matrix.args }}
+        run: npx electron-builder ${{ matrix.args }} --publish never
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Não tenta assinar no macOS (sem certificado no repositório)
