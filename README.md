@@ -1,9 +1,33 @@
 # NotifyCopy
 
-NotifyCopy é um app na bandeja do sistema (tray) que monitora a área de transferência. Quando você copia um texto, ele exibe um **toast próprio** — uma janelinha moderna, transparente e discreta — com um preview do conteúdo, contador de caracteres e animação suave. **Nunca** utiliza as notificações nativas do sistema operacional.
+> **Você copiou. Ou pelo menos, acreditou que copiou.**
+
+Todo mundo já viveu essa cena: **Ctrl+C**, volta pro trabalho, minutos depois
+**Ctrl+V**, e nada. O texto nunca chegou a sair de onde estava. Você jura que
+apertou as teclas. Jura. Mas a área de transferência é a única parte do sistema
+operacional que falha em silêncio. Ela não comemora quando deu certo, não grita
+quando deu errado. Só te deixa descobrir na hora do colar, que é justamente a
+hora em que você não pode perder tempo se perguntando *"isso aí realmente
+copiou?"*.
+
+É nesse intervalo que o NotifyCopy trabalha: você vê a cópia acontecer, não
+descobre depois.
+
+A cada cópia, um toast próprio, moderno, transparente e discreto, surge ao lado
+do cursor com um preview do conteúdo, a contagem de caracteres e uma animação
+suave de confirmação. A certeza de que o texto está na área de transferência
+chega no momento em que você copia, não minutos depois, diante de um Ctrl+V que
+não respondeu.
+
+E quando você está no ritmo, o **mini toast** (duas folhas se duplicando,
+estilo "copiar") confirma a cópia sem tirar você da concentração.
 
 ![Preview](docs/preview.png)
 ![Mini](docs/preview-mini.png)
+
+**Em uma frase:** NotifyCopy é um app na bandeja do sistema (tray) que monitora
+a área de transferência e mostra um toast personalizado a cada cópia, com
+preview do texto, contagem de caracteres e animação suave.
 
 ## O que é
 
@@ -11,7 +35,7 @@ O NotifyCopy captura cópias de texto na área de transferência e mostra uma no
 
 ## Estado atual
 
-As fases 2–4 da v0.1 estão **concluídas** de acordo com o progresso do projeto. A v0.2 (cor de destaque personalizável + mini toast) está em andamento conforme definido na especificação.
+As fases 2–4 da v0.1 estão **concluídas** de acordo com o progresso do projeto, e a **v0.2.0** (cor de destaque por presets + mini toast) já foi entregue e publicada na [GitHub Releases](https://github.com/Tayouza/notify-copy/releases), com instaladores para Linux, Windows e macOS gerados pelo CI.
 
 - **Fase 2 (Core Electron)** — estrutura principal implementada (Bramble): watcher da área de transferência, janela do toast, bandeja, posicionamento, tema, IPC e gerenciamento de instância única.
 - **Fase 3 (UI/Design do toast)** — interface e animações entregues (Sable), seguindo os contratos definidos na especificação.
@@ -25,6 +49,18 @@ O projeto já possui: `src/main/**`, `src/preload/**`, `src/renderer/**`, `asset
 - Sistema operacional: **Linux**, **macOS** ou **Windows**
 
 ## Instalação
+
+### Opção 1: baixar o instalador
+
+Baixe o arquivo da sua plataforma na página de [Releases](https://github.com/Tayouza/notify-copy/releases):
+
+| Sistema | Arquivos |
+| --- | --- |
+| **Linux** | `NotifyCopy-*.AppImage`, `NotifyCopy-*.deb` |
+| **Windows** | `NotifyCopy-*-nsis.exe` (instalador) ou `*-portable.exe` |
+| **macOS** | `NotifyCopy-*.dmg` (Intel e Apple Silicon) |
+
+### Opção 2: compilar a partir do código
 
 ```bash
 # Clonar o repositório
