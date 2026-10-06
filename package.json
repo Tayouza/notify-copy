@@ -1,7 +1,7 @@
 {
   "name": "notifycopy",
   "productName": "NotifyCopy",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Tray app that shows a custom toast when text is copied",
   "main": "src/main/main.js",
   "author": "Tayouza <tayouza@users.noreply.github.com>",
