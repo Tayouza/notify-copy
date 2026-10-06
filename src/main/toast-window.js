@@ -1,5 +1,6 @@
 const { BrowserWindow, screen, nativeTheme, app } = require('electron');
 const path = require('path');
+const cursor = require('./cursor');
 
 class ToastWindow {
   constructor(config = {}) {
@@ -95,7 +96,7 @@ class ToastWindow {
   computePosition() {
     const win = this.create();
     const [width, height] = win.getSize();
-    const display = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
+    const display = screen.getDisplayNearestPoint(cursor.getPoint());
     const workArea = display.workArea;
     const pos = this.config.position || 'cursor';
     const mode = (this.config && this.config.toastMode) || 'full';
@@ -104,12 +105,12 @@ class ToastWindow {
     const edge = mode === 'mini' ? 4 : 8;
 
     if (pos === 'cursor') {
-      const cursor = screen.getCursorScreenPoint();
-      let x = cursor.x + off;
-      let y = cursor.y + off;
-      if (x + width > workArea.x + workArea.width) x = cursor.x - width - off;
+      const pt = cursor.getPoint();
+      let x = pt.x + off;
+      let y = pt.y + off;
+      if (x + width > workArea.x + workArea.width) x = pt.x - width - off;
       if (x < workArea.x) x = workArea.x + edge;
-      if (y + height > workArea.y + workArea.height) y = cursor.y - height - off;
+      if (y + height > workArea.y + workArea.height) y = pt.y - height - off;
       if (y < workArea.y) y = workArea.y + edge;
       return { x, y };
     }

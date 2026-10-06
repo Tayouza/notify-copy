@@ -22,5 +22,8 @@
   "devDependencies": {
     "electron": "^37.6.1",
     "electron-builder": "^26.0.12"
+  },
+  "dependencies": {
+    "x11": "^4.3.0"
   }
 }

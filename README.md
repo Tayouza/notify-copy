@@ -131,8 +131,9 @@ sudo apt install libayatana-appindicator3-1 libnotify4 libnss3 libxtst6 libxss1 
 ### Notas sobre Wayland
 
 - Em sessões **Wayland**, o compositor **não permite** que o app posicione a janela livremente (o `setPosition` é ignorado). Por isso o NotifyCopy força o backend **X11/XWayland** (`--ozone-platform-hint=x11`), onde o toast fica exatamente no cursor e pode chegar perto das bordas.
+- No Linux, a posição do cursor é lida **direto do servidor X** (pacote `x11`), porque a API `screen.getCursorScreenPoint()` do Electron pode retornar um valor **desatualizado** no XWayland (o toast ficaria preso na posição da primeira cópia).
 - Isso requer o **XWayland** (presente por padrão na maioria das distros). Sem XWayland, o app ainda funciona, mas o toast aparecerá onde o compositor decidir.
-- Em X11 nativo e no Windows/macOS o posicionamento é sempre preciso.
+- Em X11 nativo e no Windows/macOS o posicionamento é sempre preciso (o pacote `x11` só é usado no Linux).
 
 ## Licença
 

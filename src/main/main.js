@@ -5,6 +5,7 @@ const { readConfig, writeConfig } = require('./config');
 const ClipboardWatcher = require('./clipboard-watcher');
 const ToastWindow = require('./toast-window');
 const { createTray } = require('./tray');
+const cursor = require('./cursor');
 
 // Platform flags - must be set before app is ready
 if (process.platform === 'linux') {
@@ -207,6 +208,7 @@ async function init() {
   }
 
   setupIpc();
+  cursor.startTracking();
   if (miniMode) {
     config.toastMode = 'mini';
   }
