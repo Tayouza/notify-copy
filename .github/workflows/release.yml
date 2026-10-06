@@ -1,14 +1,17 @@
 name: Release
 
-# Gera os instaladores nos 3 SOs e anexa numa GitHub Release.
-# Uso: crie uma tag (ex.: `v0.1.0`) e faça push dela:
-#   git tag v0.1.0 && git push origin v0.1.0
-# Ou rode manualmente em Actions (workflow_dispatch) para baixar os artefatos.
+# Gera os instaladores nos 3 SOs (Linux/Windows/macOS) e, se rodado a partir de
+# uma tag, anexa numa GitHub Release.
+#
+# Como rodar: aba Actions → "Release" → "Run workflow".
+#   - Em um branch: só gera os artefatos para download (não cria release).
+#   - Em uma tag (ex.: v0.1.0): cria/atualiza a Release com os instaladores,
+#     incluindo o .dmg do macOS (que não é possível gerar no Linux).
+#
+# O disparo automático por push de tag está desativado de propósito, para não
+# interferir em publicações manuais.
 
 on:
-  push:
-    tags:
-      - "v*"
   workflow_dispatch:
 
 jobs:
